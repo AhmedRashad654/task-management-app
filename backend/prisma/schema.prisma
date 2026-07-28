@@ -38,10 +38,11 @@ model User {
   role               Role     @default(MEMBER)
   createdAt          DateTime @default(now()) @map("created_at")
 
-  ownedProjects      Project[]       @relation("ProjectOwner")
+  ownedProjects      Project[]           @relation("ProjectOwner")
   projectMemberships ProjectMember[]
-  createdTasks       Task[]          @relation("TaskCreator")
-  assignedTasks      Task[]          @relation("TaskAssignee")
+  createdTasks       Task[]              @relation("TaskCreator")
+  assignedTasks      Task[]              @relation("TaskAssignee")
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
@@ -71,6 +72,20 @@ model ProjectMember {
 
   @@unique([projectId, userId])
   @@map("project_members")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String
+  expiresAt DateTime @map("expires_at")
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
 }
 
 model Task {
