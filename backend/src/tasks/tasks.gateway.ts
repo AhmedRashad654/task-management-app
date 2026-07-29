@@ -20,6 +20,7 @@ interface StatusChangePayload {
 }
 
 @WebSocketGateway({
+  path: '/ws',
   cors: { origin: true, credentials: true },
 })
 export class TasksGateway implements OnGatewayConnection, OnGatewayDisconnect {

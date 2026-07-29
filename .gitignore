@@ -4,7 +4,3 @@ build/
 .env
 
 backend/generated/prisma/
-.claude/
-.windsurf/
-.agents/
-skills-lock.json

@@ -1,4 +1,5 @@
 import AuthLayout from "@/layouts/AuthLayout";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import { lazy } from "react";
 import {
   createBrowserRouter,
@@ -13,6 +14,8 @@ const ForgotPassword = lazy(
   () => import("@/features/auth/pages/ForgotPassword"),
 );
 const ResetPassword = lazy(() => import("@/features/auth/pages/ResetPassword"));
+const ProjectsPage = lazy(() => import("@/features/projects/pages/ProjectsPage"));
+const ProjectDetailPage = lazy(() => import("@/features/projects/pages/ProjectDetailPage"));
 
 const Routes = () => {
   const AuthRoutes = [
@@ -54,8 +57,21 @@ const Routes = () => {
       element: <ProtectedRoute />,
       children: [
         {
-          path: "/",
-          element: <div className="p-8 text-lg font-semibold">Dashboard coming soon</div>,
+          element: <DashboardLayout />,
+          children: [
+            {
+              path: "/",
+              element: <Navigate to="/projects" replace />,
+            },
+            {
+              path: "/projects",
+              element: <ProjectsPage />,
+            },
+            {
+              path: "/projects/:projectId",
+              element: <ProjectDetailPage />,
+            },
+          ],
         },
       ],
     },

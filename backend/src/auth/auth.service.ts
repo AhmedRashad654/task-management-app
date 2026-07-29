@@ -179,7 +179,6 @@ export class AuthService {
       },
       orderBy: { createdAt: 'desc' },
     });
-
     if (!resetRecord) {
       throw new BadRequestException(AUTH_MESSAGES.INVALID_OTP);
     }
