@@ -132,12 +132,12 @@ export class ProjectMemberService {
         data: {
           userId: newUser.id,
           token: otpHash,
-          expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
       });
     });
 
-    const resetLink = `${this.frontendUrl}/reset-password?email=${encodeURIComponent(dto.email)}`;
+    const resetLink = `${this.frontendUrl}/auth/reset-password?email=${encodeURIComponent(dto.email)}`;
     const { subject, html } = newUserProjectInvitationEmail(
       project!.name,
       project!.owner!.name,

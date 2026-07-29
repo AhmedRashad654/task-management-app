@@ -184,7 +184,7 @@ export function newUserProjectInvitationEmail(
         <div class="content">
           <h2>Welcome to ${projectName}</h2>
           <p>${invitedByName} has invited you to join the project <strong>${projectName}</strong>.</p>
-          <p>To get started, please set your password using the verification code below or click the button. This code is valid for 15 minutes.</p>
+          <p>To get started, please set your password using the verification code below or click the button. This code is valid for 7 days.</p>
 
           <div class="otp-box">${otp}</div>
 

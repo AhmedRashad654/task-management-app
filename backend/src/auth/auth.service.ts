@@ -36,8 +36,9 @@ export class AuthService {
   ) {
     this.refreshSecret =
       this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
-    this.refreshExpiresIn =
-      this.configService.getOrThrow<string>('JWT_REFRESH_EXPIRATION');
+    this.refreshExpiresIn = this.configService.getOrThrow<string>(
+      'JWT_REFRESH_EXPIRATION',
+    );
     this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
   }
 
@@ -126,13 +127,12 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException(AUTH_MESSAGES.NOT_FOUND);
       }
 
-      const tokens = this.signTokens(user);
-      return { user, ...tokens };
+      return this.signTokens(user);
     } catch {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      throw new UnauthorizedException(AUTH_MESSAGES.INVALID_REFRESH_TOKEN);
     }
   }
 
@@ -155,7 +155,7 @@ export class AuthService {
       },
     });
 
-    const resetLink = `${this.frontendUrl}/reset-password?email=${encodeURIComponent(user.email)}`;
+    const resetLink = `${this.frontendUrl}/auth/reset-password?email=${encodeURIComponent(user.email)}`;
     const { subject, html } = passwordResetEmail(otp, resetLink);
     await this.emailProvider.send(user.email, subject, html);
   }

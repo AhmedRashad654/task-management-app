@@ -74,6 +74,19 @@ export class AuthController {
     return rest;
   }
 
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout and clear refresh token' })
+  @ApiResponse({ status: 200, description: 'Logged out successfully' })
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie(REFRESH_TOKEN_COOKIE, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/api/auth/refresh',
+    });
+    return { message: AUTH_MESSAGES.LOGGED_OUT };
+  }
+
   @Post('forgot-password')
   @ApiOperation({ summary: 'Request a password reset email' })
   @ApiResponse({
