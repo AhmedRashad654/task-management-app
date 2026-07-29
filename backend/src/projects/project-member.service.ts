@@ -20,14 +20,14 @@ import { PROJECT_MESSAGES } from '../common/constants/messages.constant.js';
 
 @Injectable()
 export class ProjectMemberService {
-  private readonly appOrigin: string;
+  private readonly frontendUrl: string;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     @Inject(EMAIL_PROVIDER) private readonly emailProvider: IEmailProvider,
   ) {
-    this.appOrigin = this.configService.getOrThrow<string>('APP_ORIGIN');
+    this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
   }
 
   async findMembers(projectId: string) {
@@ -137,7 +137,7 @@ export class ProjectMemberService {
       });
     });
 
-    const resetLink = `${this.appOrigin}/reset-password?email=${encodeURIComponent(dto.email)}`;
+    const resetLink = `${this.frontendUrl}/reset-password?email=${encodeURIComponent(dto.email)}`;
     const { subject, html } = newUserProjectInvitationEmail(
       project!.name,
       project!.owner!.name,

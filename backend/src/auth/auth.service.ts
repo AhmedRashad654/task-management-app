@@ -26,7 +26,7 @@ import { AUTH_MESSAGES } from '../common/constants/messages.constant.js';
 export class AuthService {
   private readonly refreshSecret: string;
   private readonly refreshExpiresIn: string;
-  private readonly appOrigin: string;
+  private readonly frontendUrl: string;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -37,8 +37,8 @@ export class AuthService {
     this.refreshSecret =
       this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
     this.refreshExpiresIn =
-      this.configService.get<string>('JWT_REFRESH_EXPIRATION') ?? '7d';
-    this.appOrigin = this.configService.getOrThrow<string>('APP_ORIGIN');
+      this.configService.getOrThrow<string>('JWT_REFRESH_EXPIRATION');
+    this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
   }
 
   private signTokens(user: JwtPayload) {
@@ -155,7 +155,7 @@ export class AuthService {
       },
     });
 
-    const resetLink = `${this.appOrigin}/reset-password?email=${encodeURIComponent(user.email)}`;
+    const resetLink = `${this.frontendUrl}/reset-password?email=${encodeURIComponent(user.email)}`;
     const { subject, html } = passwordResetEmail(otp, resetLink);
     await this.emailProvider.send(user.email, subject, html);
   }

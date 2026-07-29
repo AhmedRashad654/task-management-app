@@ -17,8 +17,7 @@ import { EmailModule } from '../common/email/email.module.js';
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: (configService.get<string>('JWT_EXPIRATION') ??
-            '15m') as any,
+          expiresIn: (configService.getOrThrow<string>('JWT_EXPIRATION')) as any,
         },
       }),
     }),
