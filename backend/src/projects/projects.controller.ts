@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -24,6 +25,7 @@ import { ProjectMemberService } from './project-member.service.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
 import { UpdateProjectDto } from './dto/update-project.dto.js';
 import { AddMemberDto } from './dto/add-member.dto.js';
+import { QueryProjectsDto } from './dto/query-projects.dto.js';
 import { ResponseMessage } from '../common/decorators/response-message.decorator.js';
 import { PROJECT_MESSAGES } from '../common/constants/messages.constant.js';
 
@@ -49,10 +51,13 @@ export class ProjectsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all projects for current user' })
-  @ApiResponse({ status: 200, description: 'List of projects' })
-  findAll(@CurrentUser() user: AuthenticatedUser) {
-    return this.projectsService.findAll(user.id);
+  @ApiOperation({ summary: 'Get all projects for current user with pagination' })
+  @ApiResponse({ status: 200, description: 'Paginated list of projects' })
+  findAll(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: QueryProjectsDto,
+  ) {
+    return this.projectsService.findAll(user.id, query);
   }
 
   @Get(':id')

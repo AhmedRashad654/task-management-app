@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module.js';
 import { UserModule } from './users/user.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
+import { TasksModule } from './tasks/tasks.module.js';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor.js';
 
@@ -19,6 +20,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor.
     AuthModule,
     UserModule,
     ProjectsModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

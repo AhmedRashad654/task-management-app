@@ -26,6 +26,7 @@ export const PROJECT_MESSAGES = {
 export const TASK_MESSAGES = {
   CREATED: 'Task created successfully',
   UPDATED: 'Task updated successfully',
+  CHANGED_STATUES: 'Task change status successfully',
   DELETED: 'Task deleted successfully',
   ASSIGNED: 'Task assigned successfully',
   NOT_FOUND: 'Task not found',

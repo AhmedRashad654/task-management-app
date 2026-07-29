@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
 import { UpdateProjectDto } from './dto/update-project.dto.js';
+import { QueryProjectsDto } from './dto/query-projects.dto.js';
 
 @Injectable()
 export class ProjectsService {
@@ -27,26 +28,46 @@ export class ProjectsService {
     return project;
   }
 
-  async findAll(userId: string) {
-    const projects = await this.prisma.project.findMany({
-      where: {
-        OR: [{ ownerId: userId }, { members: { some: { userId } } }],
-      },
-      include: {
-        owner: {
-          select: { id: true, name: true, email: true },
-        },
-        _count: {
-          select: { members: true, tasks: true },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async findAll(userId: string, query: QueryProjectsDto) {
+    const { page, limit } = query;
+    const skip = ((page ?? 1) - 1) * (limit ?? 10);
 
-    return projects.map((project) => ({
+    const where = {
+      OR: [{ ownerId: userId }, { members: { some: { userId } } }],
+    };
+
+    const [projects, total] = await this.prisma.$transaction([
+      this.prisma.project.findMany({
+        where,
+        include: {
+          owner: {
+            select: { id: true, name: true, email: true },
+          },
+          _count: {
+            select: { members: true, tasks: true },
+          },
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.project.count({ where }),
+    ]);
+
+    const items = projects.map((project) => ({
       ...project,
       role: project.ownerId === userId ? 'owner' : 'member',
     }));
+
+    return {
+      items,
+      meta: {
+        total,
+        page: page ?? 1,
+        limit: limit ?? 10,
+        totalPages: Math.ceil(total / (limit ?? 10)),
+      },
+    };
   }
 
   async findOne(projectId: string, userId: string) {
