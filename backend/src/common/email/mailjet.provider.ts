@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Inject,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Mailjet from 'node-mailjet';
 import type { IEmailProvider } from './email.interface.js';
@@ -22,7 +26,8 @@ export class MailjetProvider implements IEmailProvider {
         Messages: [
           {
             From: {
-              Email: this.configService.getOrThrow<string>('MAILJET_FROM_EMAIL'),
+              Email:
+                this.configService.getOrThrow<string>('MAILJET_FROM_EMAIL'),
               Name: this.configService.getOrThrow<string>('MAILJET_FROM_NAME'),
             },
             To: [{ Email: to }],

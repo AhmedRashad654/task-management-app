@@ -20,6 +20,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { Role } from '../../generated/prisma/enums.js';
 import { JwtPayload } from '../common/types/authenticated-user.interface.js';
+import { AUTH_MESSAGES } from '../common/constants/messages.constant.js';
 
 @Injectable()
 export class AuthService {
@@ -140,7 +141,7 @@ export class AuthService {
       where: { email: dto.email },
     });
     if (!user) {
-      return { message: 'If that email exists, a reset link has been sent' };
+      return;
     }
 
     const otp = this.generateOtp();
@@ -157,8 +158,6 @@ export class AuthService {
     const resetLink = `${this.appOrigin}/reset-password?email=${encodeURIComponent(user.email)}`;
     const { subject, html } = passwordResetEmail(otp, resetLink);
     await this.emailProvider.send(user.email, subject, html);
-
-    return { message: 'If that email exists, a reset link has been sent' };
   }
 
   async resetPassword(dto: ResetPasswordDto) {
@@ -166,7 +165,7 @@ export class AuthService {
       where: { email: dto.email },
     });
     if (!user) {
-      throw new BadRequestException('Invalid or expired OTP');
+      throw new BadRequestException(AUTH_MESSAGES.INVALID_OTP);
     }
 
     const otpHash = crypto.createHash('sha256').update(dto.otp).digest('hex');
@@ -182,7 +181,7 @@ export class AuthService {
     });
 
     if (!resetRecord) {
-      throw new BadRequestException('Invalid or expired OTP');
+      throw new BadRequestException(AUTH_MESSAGES.INVALID_OTP);
     }
 
     const newPasswordHash = await bcrypt.hash(dto.newPassword, 10);
@@ -197,7 +196,5 @@ export class AuthService {
         data: { consumed: true },
       }),
     ]);
-
-    return { message: 'Password reset successfully, please login again' };
   }
 }

@@ -6,6 +6,8 @@ import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
+import { ResponseMessage } from '../common/decorators/response-message.decorator.js';
+import { AUTH_MESSAGES } from '../common/constants/messages.constant.js';
 
 const REFRESH_TOKEN_COOKIE = 'refresh_token';
 
@@ -28,6 +30,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 409, description: 'User already exists' })
+  @ResponseMessage(AUTH_MESSAGES.REGISTERED)
   async register(
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
@@ -35,13 +38,14 @@ export class AuthController {
     const result = await this.authService.register(dto);
     const { refreshToken, ...rest } = result;
     setRefreshCookie(res, refreshToken);
-    return { data: rest, message: 'user created!' };
+    return rest;
   }
 
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ResponseMessage(AUTH_MESSAGES.LOGGED_IN)
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -49,7 +53,7 @@ export class AuthController {
     const result = await this.authService.login(dto);
     const { refreshToken, ...rest } = result;
     setRefreshCookie(res, refreshToken);
-    return { data: rest, message: 'login success!' };
+    return rest;
   }
 
   @Post('refresh')
@@ -76,6 +80,7 @@ export class AuthController {
     status: 200,
     description: 'Reset email sent if account exists',
   })
+  @ResponseMessage(AUTH_MESSAGES.PASSWORD_RESET_REQUESTED)
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
@@ -84,6 +89,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Reset password using token' })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
   @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  @ResponseMessage(AUTH_MESSAGES.PASSWORD_RESET_SUCCESS)
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
   }

@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module.js';
 import { UserModule } from './users/user.module.js';
+import { ProjectsModule } from './projects/projects.module.js';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor.js';
 
@@ -17,6 +18,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor.
     PrismaModule,
     AuthModule,
     UserModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [
